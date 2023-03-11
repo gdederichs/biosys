@@ -7,13 +7,56 @@ x0 = init_cond();
 par = param();
 l_list = [8 3.2 3 2];
 LacY_list = [3 1.3 1.2 1];
+lext_list = 1:7;
 % Timespan for simulation
-tspan = [0 20]; 
+dt    = 1e-2 ;  
+tlast = 20.000 ;
+iterations = fix(tlast/dt) ;
+tspan = dt*(0:iterations-1) ; 
 options = [];
 
-for i = 1:length(l_list)
-    plot_t_evo(tspan, set_x0(l_list(i), LacY_list(i)), options, par)
+%% Nullclines
+plot_NullCline(6,12);
+vectorField(par,6, 12);
+title('Nullclines')
+xlabel('[LacY]')
+ylabel('[Lactose]')
+legend('dLacY/dt = 0','dl/dt = 0')
+view([90 -90])
+
+%% i
+figure() %seulement pour voir ce que ca donne en mettant tout sur un seul graphe
+%(les legendes seront problematiques si on decide de faire 1 seul graphe)
+%delete figure() line 28 and decomment figure() line 147 for multiple plots
+for ii = 1:min(length(l_list), length(LacY_list))
+    plot_t_evo(tspan, set_x0(l_list(ii), LacY_list(ii)), options, par,1);
 end
+
+%% j & k
+final_LacY83 = [];
+final_LacY21 = [];
+
+for i = 1:length(lext_list)
+    par.lext = lext_list(i);
+
+    final_LacY83 = [final_LacY83 plot_t_evo(tspan, set_x0(8, 3), options, par,0)];
+    final_LacY21 = [final_LacY21 plot_t_evo(tspan, set_x0(2, 1), options, par,0)];
+    
+    %Je n'ai pas trouvé plus joli pour l'instant
+    if i~=1 && abs(final_LacY83(end)-final_LacY21(end)) < 0.001 && abs(final_LacY83(end-1)-final_LacY21(end-1)) > 0.001
+        smallest_lext = par.lext
+    end
+end
+
+%Plotting
+figure()
+plot(lext_list, final_LacY21, lext_list, final_LacY83)
+legend("l_0 = 2 and LacY_0 = 1", "l_0 = 8 and LacY_0 = 3", Location = "southeast")
+title("Bifurcation diagram")
+ylabel("Last [LacY]")
+xlabel("[lext]")
+
+%% jcomprendspaslaquestionL
 
 %% Jacobian, augmentation
 % syms l LacY beta lext gamma delta sigma p l0
@@ -25,17 +68,6 @@ end
 % B = jacobian([l_dot,LacY_dot],[beta lext gamma delta sigma p l0]);
 % 
 % % S_dot = A*S + B
-
-%% Nullclines
-plot_NullCline(6,12)
-vectorField(par,6, 12)
-title('Nullclines')
-xlabel('[LacY]')
-ylabel('[Lactose]')
-legend('dLacY/dt = 0','dl/dt = 0')
-view([90 -90])
-
-
 
 %% Functions
 function nl = plot_NullCline(x_lim, y_lim)
@@ -107,17 +139,21 @@ function x0 = set_x0(l_init, LacY0)
 x0 = [l_init, LacY0];
 end
 
-function plot_t_evo(tspan, x0, options, par)
+function last_LacY = plot_t_evo(tspan, x0, options, par, want_plot)
 [t,x] = ode45(@diff_eq,tspan,x0,options,par);
 l = x(:, 1);
 LacY = x(:, 2);
 
-figure()
-hold on
-grid minor
-plot(t, l, t, LacY)
-legend('Intracellular Lactose', 'LacY')
-xlabel('time')
-ylabel('concentration')
-title("Time evolution with l_0 = "+x0(1)+" and LacY_0 = "+x0(2))
+if want_plot == 1
+    %figure()
+    hold on
+    grid minor
+    plot(t, l, t, LacY)
+    legend('Intracellular Lactose', 'LacY')
+    xlabel('time')
+    ylabel('concentration')
+    title("Time evolution with l_0 = "+x0(1)+" and LacY_0 = "+x0(2))
+end
+
+last_LacY = LacY(end);
 end

@@ -5,21 +5,15 @@ clear
 % Initial cdts and params
 x0 = init_cond();
 par = param();
+l_list = [8 3.2 3 2];
+LacY_list = [3 1.3 1.2 1];
 % Timespan for simulation
 tspan = [0 20]; 
 options = [];
 
-[t1,x] = ode45(@diff_eq,tspan,x0,options,par);
-l = x(:, 1);
-LacY = x(:, 2);
-
-figure(1)
-hold on
-grid minor
-plot(t1, l, t1, LacY)
-legend('Intracellular Lactose', 'LacY')
-xlabel('time')
-ylabel('concentration')
+for i = 1:length(l_list)
+    plot_t_evo(tspan, set_x0(l_list(i), LacY_list(i)), options, par)
+end
 
 %% Jacobian, augmentation
 % syms l LacY beta lext gamma delta sigma p l0
@@ -106,4 +100,24 @@ l_init = 4;
 LacY0 = 1;
 
 x0 = [l_init; LacY0];
+end
+
+function x0 = set_x0(l_init, LacY0)
+
+x0 = [l_init, LacY0];
+end
+
+function plot_t_evo(tspan, x0, options, par)
+[t,x] = ode45(@diff_eq,tspan,x0,options,par);
+l = x(:, 1);
+LacY = x(:, 2);
+
+figure()
+hold on
+grid minor
+plot(t, l, t, LacY)
+legend('Intracellular Lactose', 'LacY')
+xlabel('time')
+ylabel('concentration')
+title("Time evolution with l_0 = "+x0(1)+" and LacY_0 = "+x0(2))
 end

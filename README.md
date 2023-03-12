@@ -1,2 +1,2 @@
-# biosys
-Files for Biosys project
+# Biosystems Engineering
+## Modeling of Lac operon and its response to extracellular lactose

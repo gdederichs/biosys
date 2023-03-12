@@ -7,7 +7,7 @@ x0 = init_cond();
 par = param();
 l_list = [8 3.2 3 2];
 LacY_list = [3 1.3 1.2 1];
-lext_list = 1:7;
+lext_list = 0:0.01:7;
 % Timespan for simulation
 dt    = 1e-2 ;  
 tlast = 20.000 ;
@@ -135,7 +135,6 @@ x0 = [l_init; LacY0];
 end
 
 function x0 = set_x0(l_init, LacY0)
-
 x0 = [l_init, LacY0];
 end
 

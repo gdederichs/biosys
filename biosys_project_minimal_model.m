@@ -42,9 +42,13 @@ for i = 1:length(lext_list)
     final_LacY83 = [final_LacY83 plot_t_evo(tspan, set_x0(8, 3), options, par,0)];
     final_LacY21 = [final_LacY21 plot_t_evo(tspan, set_x0(2, 1), options, par,0)];
     
-    %Je n'ai pas trouvé plus joli pour l'instant
-    if i~=1 && abs(final_LacY83(end)-final_LacY21(end)) < 0.001 && abs(final_LacY83(end-1)-final_LacY21(end-1)) > 0.001
-        smallest_lext = par.lext
+end
+
+for iii = 1:length(lext_list)
+    if iii~=1 && abs(final_LacY83(iii)-final_LacY21(iii)) < 0.001 && abs(final_LacY83(iii-1)-final_LacY21(iii-1)) > 0.001
+        largest_lext = lext_list(iii)
+    elseif iii~=length(lext_list) && abs(final_LacY83(iii)-final_LacY21(iii)) < 0.001 && abs(final_LacY83(iii+1)-final_LacY21(iii+1)) > 0.001
+        smallest_lext = lext_list(iii)
     end
 end
 

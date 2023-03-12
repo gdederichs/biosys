@@ -90,7 +90,6 @@ par.n = 1;
 par.m = 1;
 end
 
-
 function x0 = init_cond()
 lin = 6;
 LacI0 = 0.01;

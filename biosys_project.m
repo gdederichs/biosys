@@ -45,7 +45,7 @@ LacY_merge = cat(1,LacY,LacY_1);
 LacAZ_merge = cat(1,LacAZ,LacAZ_1);
 t_merge = cat(1,t1,t1(end)+t2);
 
-figure(3)
+figure(3);
 hold on
 grid minor
 plot(t_merge, l_merge, t_merge, LacI_merge, t_merge, LacY_merge, t_merge, LacAZ_merge)
@@ -53,6 +53,8 @@ xline(t1(end),Label = "Extracellular Lactose added",LineStyle="--")
 legend('Intracellular Lactose', 'LacI', 'LacY', 'LacA and LacZ','',Location = 'northwest')
 xlabel('time')
 ylabel('concentration')
+set(gcf,'Position',[100 100 1000 600])
+saveas(gcf,'Results/complete_evo.png')
 hold off
 %% Functions
 function dxdt = diff_eq(t,x,par)

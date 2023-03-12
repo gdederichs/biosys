@@ -53,6 +53,7 @@ xline(t1(end),Label = "Extracellular Lactose added",LineStyle="--")
 legend('Intracellular Lactose', 'LacI', 'LacY', 'LacA and LacZ','',Location = 'northwest')
 xlabel('time')
 ylabel('concentration')
+ylim([0,inf])
 set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/complete_evo.png')
 hold off

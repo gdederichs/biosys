@@ -23,16 +23,22 @@ xlabel('[LacY]')
 ylabel('[Lactose]')
 legend('dLacY/dt = 0','dl/dt = 0')
 view([90 -90])
-
-%% i
+set(gcf,'Position',[100 100 1000 600])
+saveas(gcf,'Results/nullclines.png')
+hold off
+%% Temporal evolution with varying init cdt
 figure() %seulement pour voir ce que ca donne en mettant tout sur un seul graphe
 %(les legendes seront problematiques si on decide de faire 1 seul graphe)
 %delete figure() line 28 and decomment figure() line 147 for multiple plots
 for ii = 1:min(length(l_list), length(LacY_list))
     plot_t_evo(tspan, set_x0(l_list(ii), LacY_list(ii)), options, par,1);
 end
-
-%% j & k
+hold on
+grid minor
+set(gcf,'Position',[100 100 1000 600])
+saveas(gcf,'Results/temporal_evo.png')
+hold off
+%% Bifurcation
 final_LacY83 = [];
 final_LacY21 = [];
 
@@ -54,14 +60,15 @@ end
 
 %Plotting
 figure()
+hold on
+grid minor
 plot(lext_list, final_LacY21, lext_list, final_LacY83)
 legend("l_0 = 2 and LacY_0 = 1", "l_0 = 8 and LacY_0 = 3", Location = "southeast")
 title("Bifurcation diagram")
-ylabel("Last [LacY]")
+ylabel("[LacY]_s_s")
 xlabel("[lext]")
-
-%% jcomprendspaslaquestionL
-
+set(gcf,'Position',[100 100 1000 600])
+saveas(gcf,'Results/bifurcation.png')
 %% Jacobian, augmentation
 % syms l LacY beta lext gamma delta sigma p l0
 % 

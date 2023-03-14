@@ -27,15 +27,15 @@ set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/nullclines.png')
 hold off
 %% Temporal evolution with varying init cdt
-figure() %seulement pour voir ce que ca donne en mettant tout sur un seul graphe
-%(les legendes seront problematiques si on decide de faire 1 seul graphe)
-%delete figure() line 28 and decomment figure() line 147 for multiple plots
-for ii = 1:min(length(l_list), length(LacY_list))
-    plot_t_evo(tspan, set_x0(l_list(ii), LacY_list(ii)), options, par,1);
-end
+figure()
 hold on
 grid minor
-set(gcf,'Position',[100 100 1000 600])
+for ii = 1:min(length(l_list), length(LacY_list))
+    subplot(min(length(l_list), length(LacY_list))/2,2,ii)
+    plot_t_evo(tspan, set_x0(l_list(ii), LacY_list(ii)), options, par,1);
+end
+
+set(gcf,'Position',[10 10 1500 900])
 saveas(gcf,'Results/temporal_evo.png')
 hold off
 %% Bifurcation

@@ -32,7 +32,8 @@ hold on
 grid minor
 for ii = 1:min(length(l_list), length(LacY_list))
     subplot(min(length(l_list), length(LacY_list))/2,2,ii)
-    plot_t_evo(tspan, set_x0(l_list(ii), LacY_list(ii)), options, par,1);
+    [last_l, last_LacY] = plot_t_evo(tspan, set_x0(l_list(ii), LacY_list(ii)), options, par,1);
+    ylim([0 max(max(last_l, last_LacY), max(l_list(ii), LacY_list(ii)))+1])
 end
 
 set(gcf,'Position',[10 10 1500 900])
@@ -44,9 +45,12 @@ final_LacY21 = [];
 
 for i = 1:length(lext_list)
     par.lext = lext_list(i);
+    
+    [final_l_83, final_LacY_83] = plot_t_evo(tspan, set_x0(8, 3), options, par,0);
+    [final_l_21, final_LacY_21] = plot_t_evo(tspan, set_x0(2, 1), options, par,0);
 
-    final_LacY83 = [final_LacY83 plot_t_evo(tspan, set_x0(8, 3), options, par,0)];
-    final_LacY21 = [final_LacY21 plot_t_evo(tspan, set_x0(2, 1), options, par,0)];
+    final_LacY83 = [final_LacY83 final_LacY_83];
+    final_LacY21 = [final_LacY21 final_LacY_21];
     
 end
 
@@ -149,7 +153,7 @@ function x0 = set_x0(l_init, LacY0)
 x0 = [l_init, LacY0];
 end
 
-function last_LacY = plot_t_evo(tspan, x0, options, par, want_plot)
+function [last_l, last_LacY] = plot_t_evo(tspan, x0, options, par, want_plot)
 [t,x] = ode45(@diff_eq,tspan,x0,options,par);
 l = x(:, 1);
 LacY = x(:, 2);
@@ -166,4 +170,5 @@ if want_plot == 1
 end
 
 last_LacY = LacY(end);
+last_l = l(end);
 end

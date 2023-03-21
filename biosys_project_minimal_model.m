@@ -74,15 +74,24 @@ xlabel("[lext]")
 set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/bifurcation.png')
 %% Jacobian, augmentation
-% syms l LacY beta lext gamma delta sigma p l0
-% 
-% l_dot = beta*lext*LacY-gamma*l;
-% LacY_dot = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
-% 
-% A = jacobian([l_dot,LacY_dot],[l LacY]);
-% B = jacobian([l_dot,LacY_dot],[beta lext gamma delta sigma p l0]);
-% 
-% % S_dot = A*S + B
+
+%are l0 and lext parameters ?
+syms l LacY beta lext gamma delta sigma p l0
+
+l_dot = beta*lext*LacY-gamma*l;
+LacY_dot = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
+
+A = jacobian([l_dot,LacY_dot],[l LacY]);
+B = jacobian([l_dot,LacY_dot],[beta lext gamma delta sigma p l0]);
+size(A)
+size(B)
+
+%don't have any idea...
+syms S
+S_dot = A*S + B;
+
+[t,x] = ode45(S_dot,tspan,x0,options,par);
+
 
 %% Functions
 function nl = plot_NullCline(x_lim, y_lim)

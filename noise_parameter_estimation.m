@@ -4,7 +4,13 @@ function results = seven_parameter_estimation(initParams)
 data = load("PosFeed_Expdata");
 tspan = data.tspan;
 exp = data.exp;
- 
+
+% Adding noise (var = 0.01, sd = 0.1)
+for i = 1:length(tspan)
+    tspan(i) = tspan(i)+randn(1,1)*0.04; 
+    exp(i) = exp(i)+randn(1,1)*0.04;
+end
+
 opts = optimset('TolFun', 1e-12, 'TolX', 1e-12, 'MaxIter', 150, 'Diagnostics', 'off', 'Display', 'iter');
 initParams=[0.1;0.1;0.1;0.1;0.1; 0.1;0.05;0.05];
 
@@ -16,40 +22,39 @@ lsqnonlin(@residual,  log10 (initParams), log10 (loBound), log10 (upBound), opts
 
 function R = residual(b)
         
-    a = 10.^b;
+   a = 10.^b;
          
-    [T,Y]= reactionsolve(a);
+   [T,Y]= reactionsolve(a);
        
-    residual = exp - Y;
-    R = residual(:);
+   residual = exp - Y;
+   R = residual(:);
        
-    results=a;
+   results=a;
        
-    subplot(2,1,1);
-    plot(T,Y(:,1));
-    hold on;
-    plot(tspan(:,1),exp(:,1),'o');
-    xlabel('Time');
-    ylabel('Act');
-    hold off;
-    str = sprintf('%g | ', a);
-    title(str);
+   subplot(2,1,1);
+   plot(T,Y(:,1));
+   hold on;
+   plot(tspan(:,1),exp(:,1),'o');
+   xlabel('Time');
+   ylabel('Act');
+   hold off;
+   str = sprintf('%g | ', a);
+   title(str);
 
          
-    subplot(2,1,2);
-    plot(T,Y(:,2));
-    hold on;
-    plot(tspan(:,1),exp(:,2),'o');
-    xlabel('Time');
-    ylabel('yP');
-    hold off;
+   subplot(2,1,2);
+   plot(T,Y(:,2));
+   hold on;
+   plot(tspan(:,1),exp(:,2),'o');
+   xlabel('Time');
+   ylabel('yP');
+   hold off;
           
-    hold off;
-    drawnow;
+   hold off;
+   drawnow;
 end
 
 function [T,Y] = reactionsolve(a)
-
 
     s=a(1);
     k1=a(2);
@@ -61,7 +66,7 @@ function [T,Y] = reactionsolve(a)
     km5=a(8);
 
     % exp(tspan = 0)
-    x0 = [0.8; 0.6];
+    x0 = [exp(1,1); exp(1,2)];
 
     [T,Y] = ode45(@reaction, tspan, x0, []);
 
@@ -85,5 +90,4 @@ end
 end
 
 end
-
 

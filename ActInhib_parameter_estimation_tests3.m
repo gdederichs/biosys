@@ -24,12 +24,12 @@ initParams=[0.1;0.1;0.1; 0.5;0.5;0.05]
 % we will estimate only 3 parameters, than 5
 % first km5, km6, k5, k6, s
 loBound = [0.05 0.05 0.1 0.1 0.1]; 
- upBound = [0.1 0.1 1.5 1.5 0.8];
+upBound = [0.1 0.1 1.5 1.5 0.8];
 % s Km5 Km6
 %loBound = [0 0 0]; 
 %upBound = [1 1 1];
-% loBound = [0.01]; 
- %upBound = [0.4];
+%loBound = [0.01]; 
+%upBound = [0.4];
 
 % loBound = [0.0001 .0452 .05 .0444 .0001 250 .007]; 
 % upBound = [0.48 1.7 1.7 1.9 .02 350 .008];

@@ -61,15 +61,17 @@ Act=x(1);
 yp=x(2);
 
 par.ytot=1;
-par.E=0.2;
+par.E=0.5;
 
-par.k1 = 0.1;
-par.k2 = 1.1324;
-par.k3 = 1.5;
-par.k4 = 0.1;
-par.k5 = 0.502;
-par.km4 = 0.1;
-par.km5 = 0.05;
+
+par.k1=1;
+par.k2=0.8;
+par.k3=1.2;
+par.k4=1;
+par.k5=1;
+par.km4=0.05;
+par.km5=0.05;
+
 
 Act_dot = par.k1*s+par.k2*yp-par.k3*Act;
 yp_dot = par.k4*Act*(par.ytot-yp)/(par.km4)-par.k5*par.E*yp/(par.km5+yp);

@@ -74,7 +74,7 @@ par.km5=0.05;
 
 
 Act_dot = par.k1*s+par.k2*yp-par.k3*Act;
-yp_dot = par.k4*Act*(par.ytot-yp)/(par.km4)-par.k5*par.E*yp/(par.km5+yp);
+yp_dot = par.k4*Act*(par.ytot-yp)/(par.km4+par.ytot-yp)-par.k5*par.E*yp/(par.km5+yp);
 
 dx = zeros(2,1);
 dx(1)=Act_dot;

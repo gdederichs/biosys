@@ -86,7 +86,7 @@ par.ytot=1;
 par.E=0.5;
 
 Act_dot = k1*s+k2*yp-k3*Act;
-yp_dot = k4*Act*(par.ytot-yp)/(km4)-k5*par.E*yp/(km5+yp);
+yp_dot = k4*Act*(par.ytot-yp)/(km4+par.ytot-yp)-k5*par.E*yp/(km5+yp);
 
 dx = zeros(2,1);
 dx(1)=Act_dot;

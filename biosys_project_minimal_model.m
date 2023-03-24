@@ -74,26 +74,49 @@ xlabel("[lext]")
 set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/bifurcation.png')
 %% Jacobian, augmentation
-
+clc
 %are l0 and lext parameters ?
-syms l LacY beta lext gamma delta sigma p l0
+%syms l LacY beta lext gamma delta sigma p l0
 
-l_dot = beta*lext*LacY-gamma*l;
-LacY_dot = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
+% l_dot = beta*lext*LacY-gamma*l;
+ %LacY_dot = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
+% 
+% A = jacobian([l_dot,LacY_dot],[l LacY]);
+ %B = jacobian([l_dot,LacY_dot],[beta lext gamma delta sigma p l0]);
 
-A = jacobian([l_dot,LacY_dot],[l LacY]);
-B = jacobian([l_dot,LacY_dot],[beta lext gamma delta sigma p l0]);
-size(A)
-size(B)
-
-%don't have any idea...
-syms S
-S_dot = A*S + B;
-
-[t,x] = ode45(S_dot,tspan,x0,options,par);
-
+[t,S] = ode45(@S_dot,tspan,ones([14,1]));
+S = reshape(S.',2,7,[]);
+S(:,:, 2)
+S(:, :, end)
 
 %% Functions
+function dsdt = S_dot(t, S)
+beta = 1;
+gamma = 1;
+delta = 0.2;
+sigma = 1;
+l0 = 4;
+p= 4;
+lext = 1;
+
+syms l LacY
+
+l_dotA = beta*lext*LacY-gamma*l;
+LacY_dotA = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
+
+A = matlabFunction(jacobian([l_dotA,LacY_dotA],[l LacY]));
+
+syms betaa lextt gammaa deltaa sigmaa pp l00
+l=1;
+LacY=1;
+l_dotB = betaa*lextt*LacY-gammaa*l;
+LacY_dotB = deltaa+pp*l^4/(l^4+l00^4)-sigmaa*LacY;
+
+B = matlabFunction(jacobian([l_dotB,LacY_dotB],[betaa lextt gammaa deltaa sigmaa pp l00]));
+
+ ds = A(1)*reshape(S, [2, 7]) + B(1, 4, 1, 4);
+ dsdt = reshape(ds, [14, 1]);
+end
 function nl = plot_NullCline(x_lim, y_lim)
 par = param();
 

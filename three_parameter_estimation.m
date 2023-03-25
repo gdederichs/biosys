@@ -9,8 +9,8 @@ opts = optimset('TolFun', 1e-12, 'TolX', 1e-12, 'MaxIter', 150, 'Diagnostics', '
 initParams=[0.8;0.05;0.05];
 
 % 3 parameters estimated s, km4, km5
-loBound = [0.05 0.2 0.05]; 
-upBound = [0.8 0.5 0.1];
+loBound = [0.1 0.05 0.05]; 
+upBound = [0.8 0.1 0.1];
 
 lsqnonlin(@residual,  log10 (initParams), log10 (loBound), log10 (upBound), opts);
 
@@ -18,7 +18,15 @@ function R = residual(b)
         
 a = 10.^b;
 [T,Y]= reactionsolve(a);
-residual = exp - Y;
+residual = zeros([length(tspan), 2]);
+for i = 1:length(T)
+    for ii = 1:length(tspan)
+        if T(i) == tspan(ii)
+            residual(ii, 1) = exp(ii, 1)-Y(i, 1);
+            residual(ii, 2) = exp(ii, 2)-Y(i, 2);
+        end
+    end
+end
 R = residual(:);
 results=a;
    
@@ -55,8 +63,8 @@ km5=a(3);
 
 % exp(tspan = 0)
 x0 = [0.8; 0.6];
-
-[T,Y] = ode45(@reaction, tspan, x0, []);
+t = 0:0.01:12;
+[T,Y] = ode45(@reaction, t, x0, []);
 
 function dx = reaction(t,x)
 

@@ -30,17 +30,17 @@ lsqnonlin(@residual,  log10 (initParams), log10 (loBound), log10 (upBound), opts
 function R = residual(b)
         
 a = 10.^b;    
-[T,Y]= reactionsolve(a); 
-residual = [];
+[T,Y]= reactionsolve(a);
+residual = zeros([length(tspan), 2]);
 for i = 1:length(T)
     for ii = 1:length(tspan)
         if T(i) == tspan(ii)
-            exp(ii)
-            residual = [residual, exp(ii) - Y(i)];
+            residual(ii, 1) = exp(ii, 1)-Y(i, 1);
+            residual(ii, 2) = exp(ii, 2)-Y(i, 2);
         end
     end
 end
-R = residual;
+R = residual(:);
 results=a;
 
 subplot(2,1,1);

@@ -18,17 +18,16 @@ function R = residual(b)
         
 a = 10.^b;    
 [T,Y]= reactionsolve(a);
-residual = [];
+residual = zeros([length(tspan), 2]);
 for i = 1:length(T)
     for ii = 1:length(tspan)
         if T(i) == tspan(ii)
-            T(i)
-            tspan(ii)
-            residual = [residual, exp(ii) - Y(i)];
+            residual(ii, 1) = exp(ii, 1)-Y(i, 1);
+            residual(ii, 2) = exp(ii, 2)-Y(i, 2);
         end
     end
 end
-R = residual;
+R = residual(:);
 % size(R)
 % SSE_Act = R(1:4).*R(1:4);
 % SSE_ACT = sum(SSE_Act(:))

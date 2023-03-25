@@ -41,6 +41,7 @@ for i = 1:length(T)
     end
 end
 R = residual(:);
+SSE = sum(R(:).^2);
 results=a;
 
 subplot(2,1,1);

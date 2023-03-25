@@ -28,12 +28,7 @@ for i = 1:length(T)
     end
 end
 R = residual(:);
-% size(R)
-% SSE_Act = R(1:4).*R(1:4);
-% SSE_ACT = sum(SSE_Act(:))
-% 
-% SSE_yp = R(5:8).*R(5:8);
-% SSE_yp = sum(SSE_Act(:))
+SSE = sum(R(:).^2);
 results=a;
    
 subplot(2,1,1);

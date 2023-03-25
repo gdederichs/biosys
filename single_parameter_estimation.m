@@ -60,7 +60,7 @@ function [T,Y] = reactionsolve(a)
 s=a(1);
 
 % exp(tspan = 0)
-x0 = [0.8; 0.6];
+x0 = [1.2; 0.1];
 t = 0:0.01:12;
 [T,Y] = ode45(@reaction, t, x0, []);
 

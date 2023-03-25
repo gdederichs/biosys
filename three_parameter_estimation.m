@@ -9,8 +9,8 @@ opts = optimset('TolFun', 1e-12, 'TolX', 1e-12, 'MaxIter', 150, 'Diagnostics', '
 initParams=[0.8;0.05;0.05];
 
 % 3 parameters estimated s, km4, km5
-loBound = [0.1 0.2 0.05]; 
-upBound = [0.8 0.5 0.1];
+loBound = [0.1 0.05 0.05]; 
+upBound = [0.8 0.1 0.1];
 
 lsqnonlin(@residual,  log10 (initParams), log10 (loBound), log10 (upBound), opts);
 
@@ -28,7 +28,7 @@ for i = 1:length(T)
     end
 end
 R = residual(:);
-SSE = sum(R(:).^2);
+SSE = sum(R(:).^2)
 results=a;
    
 subplot(2,1,1);

@@ -31,8 +31,16 @@ function R = residual(b)
         
 a = 10.^b;    
 [T,Y]= reactionsolve(a); 
-residual = exp - Y;
-R = residual(:);
+residual = [];
+for i = 1:length(T)
+    for ii = 1:length(tspan)
+        if T(i) == tspan(ii)
+            exp(ii)
+            residual = [residual, exp(ii) - Y(i)];
+        end
+    end
+end
+R = residual;
 results=a;
 
 subplot(2,1,1);
@@ -74,8 +82,8 @@ km5=a(8);
 
 % exp(tspan = 0)
 x0 = [0.8; 0.6];
-
-[T,Y] = ode45(@reaction, tspan, x0, []);
+t = 0:0.01:12;
+[T,Y] = ode45(@reaction, t, x0, []);
 
 function dx = reaction(t,x)
 

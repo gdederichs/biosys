@@ -18,8 +18,23 @@ function R = residual(b)
         
 a = 10.^b;    
 [T,Y]= reactionsolve(a);
-residual = exp - Y;
-R = residual(:);
+residual = [];
+for i = 1:length(T)
+    for ii = 1:length(tspan)
+        if T(i) == tspan(ii)
+            T(i)
+            tspan(ii)
+            residual = [residual, exp(ii) - Y(i)];
+        end
+    end
+end
+R = residual;
+% size(R)
+% SSE_Act = R(1:4).*R(1:4);
+% SSE_ACT = sum(SSE_Act(:))
+% 
+% SSE_yp = R(5:8).*R(5:8);
+% SSE_yp = sum(SSE_Act(:))
 results=a;
    
 subplot(2,1,1);
@@ -52,8 +67,8 @@ s=a(1);
 
 % exp(tspan = 0)
 x0 = [0.8; 0.6];
-
-[T,Y] = ode45(@reaction, tspan, x0, []);
+t = 0:0.01:12;
+[T,Y] = ode45(@reaction, t, x0, []);
 
 function dx = reaction(t,x)
 

@@ -4,10 +4,11 @@ clear
 %% Minimal Model Simulation
 % Initial cdts and params
 x0 = init_cond();
-par = param();
 l_list = [8 3.2 3 2];
 LacY_list = [3 1.3 1.2 1];
 lext_list = 0:0.01:7;
+par = param();
+
 % Timespan for simulation
 dt    = 1e-2 ;  
 tlast = 20.000 ;
@@ -26,6 +27,7 @@ view([90 -90])
 set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/nullclines.png')
 hold off
+
 %% Temporal evolution with varying init cdt
 figure()
 hold on
@@ -39,6 +41,7 @@ end
 set(gcf,'Position',[10 10 1500 900])
 saveas(gcf,'Results/temporal_evo.png')
 hold off
+
 %% Bifurcation
 final_LacY83 = [];
 final_LacY21 = [];
@@ -54,6 +57,7 @@ for i = 1:length(lext_list)
     
 end
 
+% Values of lext for which bistability is no longer observed
 for iii = 1:length(lext_list)
     if iii~=1 && abs(final_LacY83(iii)-final_LacY21(iii)) < 0.001 && abs(final_LacY83(iii-1)-final_LacY21(iii-1)) > 0.001
         largest_lext = lext_list(iii)
@@ -62,7 +66,7 @@ for iii = 1:length(lext_list)
     end
 end
 
-%Plotting
+% Plotting of bifurcation diagram
 figure()
 hold on
 grid minor
@@ -73,20 +77,10 @@ ylabel("[LacY]_s_s")
 xlabel("[lext]")
 set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/bifurcation.png')
-%% Jacobian, augmentation
-clc
-%are l0 and lext parameters ?
-%syms l LacY beta lext gamma delta sigma p l0
 
-% l_dot = beta*lext*LacY-gamma*l;
- %LacY_dot = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
-% 
-% A = jacobian([l_dot,LacY_dot],[l LacY]);
- %B = jacobian([l_dot,LacY_dot],[beta lext gamma delta sigma p l0]);
-
-[t,S] = ode45(@S_dot,tspan,ones([14,1]));
+%% Sensitivity analysis
+[t,S] = ode45(@S_dot,tspan,zeros([14,1]));
 S = reshape(S.',2,7,[]);
-S(:,:, 2)
 S(:, :, end)
 
 %% Functions
@@ -117,13 +111,13 @@ B = matlabFunction(jacobian([l_dotB,LacY_dotB],[betaa lextt gammaa deltaa sigmaa
  ds = A(1)*reshape(S, [2, 7]) + B(1, 4, 1, 4);
  dsdt = reshape(ds, [14, 1]);
 end
+
 function nl = plot_NullCline(x_lim, y_lim)
 par = param();
 
 syms l LacY 
 LacY_dot = par.delta+par.p*l^4/(l^4+par.l0^4)-par.sigma*LacY;
 l_dot = par.beta*par.lext*LacY-par.gamma*l;
-
 
 figure()
 hold on
@@ -144,10 +138,7 @@ l_dot = par.beta.*par.lext.*LacY-par.gamma.*l;
 quiver(LacY, l, LacY_dot, l_dot)
 xlim([0 x_lim])
 ylim([0 y_lim])
-
 end
-
-
 
 function dxdt = diff_eq(t,x,par)
 % Variables 
@@ -158,10 +149,8 @@ LacY = x(2);
 l_dot = par.beta*par.lext*LacY-par.gamma*l;
 LacY_dot = par.delta+par.p*l^4/(l^4+par.l0^4)-par.sigma*LacY;
 
-
 dxdt = [l_dot;LacY_dot];
 end
-
 
 function par = param()
 par.beta = 1;
@@ -172,7 +161,6 @@ par.l0 = 4;
 par.p = 4;
 par.lext = 2.5;
 end
-
 
 function x0 = init_cond()
 l_init = 4;
@@ -191,7 +179,6 @@ l = x(:, 1);
 LacY = x(:, 2);
 
 if want_plot == 1
-    %figure()
     hold on
     grid minor
     plot(t, l, t, LacY)

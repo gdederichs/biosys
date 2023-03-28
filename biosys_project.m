@@ -15,6 +15,8 @@ LacI = x(:, 2);
 LacY = x(:, 3);
 LacAZ = x(:, 4);
 
+% Simulation of the Lac operon without lactose input
+
 % figure(1)
 % plot(t1, l, t1, LacI, t1, LacY, t1, LacAZ)
 % legend('Intracellular Lactose', 'LacI', 'LacY', 'LacA and LacZ')
@@ -31,6 +33,8 @@ LacI_1 = x(:, 2);
 LacY_1 = x(:, 3);
 LacAZ_1 = x(:, 4);
 
+% Simulation of the lac operon with lactose input
+
 % figure(2)
 % plot(t2, l_1, t2, LacI_1, t2, LacY_1, t2, LacAZ_1)
 % legend('Intracellular Lactose', 'LacI', 'LacY', 'LacA and LacZ')
@@ -45,6 +49,7 @@ LacY_merge = cat(1,LacY,LacY_1);
 LacAZ_merge = cat(1,LacAZ,LacAZ_1);
 t_merge = cat(1,t1,t1(end)+t2);
 
+% Plotting entire simulation
 figure(3);
 hold on
 grid minor
@@ -57,6 +62,7 @@ ylim([0,inf])
 set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/complete_evo.png')
 hold off
+
 %% Functions
 function dxdt = diff_eq(t,x,par)
 % Variables 
@@ -76,18 +82,18 @@ end
 
 
 function par = param()
-par.k1 = 0.9; %absorption rate of lext to l
-par.k2 = 1; %formation of LacI
-par.k3 = 3; %formation of LacY, LacA and LacZ
-par.kd = 0.5; %degradation of l
-par.kdI = 0.4; %degradation of LacI
-par.kdY = 0.2; %degradation of LacY
-par.kdAZ = 0.2; %degradation of LacA and LacZ
-par.Kl = 0.03; %inhibition of LacI (smaller value -> bigger inhinition)
-par.KI = 0.05; %inhibition of LacY, LacA and LacZ (smaller value -> bigger inhinition)
-par.lext = 0.0; %lext constant
-par.n = 1;
-par.m = 1;
+par.k1 = 0.9;       % Absorption rate of lext to l
+par.k2 = 1;         % Formation of LacI
+par.k3 = 3;         % Formation of LacY, LacA and LacZ
+par.kd = 0.5;       % Degradation of l
+par.kdI = 0.4;      % Degradation of LacI
+par.kdY = 0.2;      % Degradation of LacY
+par.kdAZ = 0.2;     % Degradation of LacA and LacZ
+par.Kl = 0.03;      % Inhibition of LacI (smaller value -> bigger inhinition)
+par.KI = 0.05;      % Inhibition of LacY, LacA and LacZ (smaller value -> bigger inhinition)
+par.lext = 0.0;     % lext constant
+par.n = 1;          % LacI_dot Hill coefficient
+par.m = 1;          % LacY_dot and LacAZ_dot Hill coefficient
 end
 
 function x0 = init_cond()

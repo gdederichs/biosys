@@ -1,6 +1,5 @@
-function results = seven_parameter_estimation(initParams) 
-
-% Estimation of the parameters by non-linear least squares optimization
+function results = eight_parameter_estimation(initParams) 
+% Estimation of the parameters s, k1, k2, k3, k4, k5, km4 and km5 by non-linear least squares optimization
 data = load("PosFeed_Expdata");
 tspan = data.tspan;
 exp = data.exp;
@@ -17,18 +16,15 @@ set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/paramest_data.png')
 hold off
 
- 
 opts = optimset('TolFun', 1e-12, 'TolX', 1e-12, 'MaxIter', 150, 'Diagnostics', 'off', 'Display', 'iter');
 initParams=[0.1;0.1;0.1;0.1;0.1; 0.1;0.05;0.05];
 
-% 8 parameters estimated s, k1, k2, k3, k4, k5, km4, km5
 loBound = [0.1 0.1 0.1 0.1 0.1 0.1 0.05 0.05]; 
 upBound = [0.8 1.5 1.5 1.5 1.5 1.5 0.1 0.1];
 
 lsqnonlin(@residual,  log10 (initParams), log10 (loBound), log10 (upBound), opts);
 
-function R = residual(b)
-        
+function R = residual(b)     
 a = 10.^b;    
 [T,Y]= reactionsolve(a);
 residual = zeros([length(tspan), 2]);
@@ -71,7 +67,6 @@ drawnow;
 end
 
 function [T,Y] = reactionsolve(a)
-
 s=a(1);
 k1=a(2);
 k2=a(3);
@@ -87,7 +82,6 @@ t = 0:0.01:12;
 [T,Y] = ode45(@reaction, t, x0, []);
 
 function dx = reaction(t,x)
-
 Act=x(1);
 yp=x(2);
 
@@ -99,12 +93,9 @@ yp_dot = k4*Act*(par.ytot-yp)/(km4+par.ytot-yp)-k5*par.E*yp/(km5+yp);
 
 dx = zeros(2,1);
 dx(1)=Act_dot;
-dx(2)=yp_dot;
-    
+dx(2)=yp_dot;   
 end
-
 end
-
 end
 
 

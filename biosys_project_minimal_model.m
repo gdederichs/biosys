@@ -79,8 +79,8 @@ set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/bifurcation.png')
 
 %% Sensitivity analysis
-[t,S] = ode45(@S_dot,tspan,zeros([14,1]));
-S = reshape(S.',2,7,[]);
+[t,S] = ode45(@S_dot,tspan,zeros([12,1]));
+S = reshape(S.',2,6,[]);
 S(:, :, end)
 
 %% Functions
@@ -91,7 +91,8 @@ delta = 0.2;
 sigma = 1;
 l0 = 4;
 p= 4;
-lext = 1;
+% Note: S change complètement en changeant lext
+lext = 2.5;
 
 syms l LacY
 
@@ -100,16 +101,16 @@ LacY_dotA = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
 
 A = matlabFunction(jacobian([l_dotA,LacY_dotA],[l LacY]));
 
-syms betaa lextt gammaa deltaa sigmaa pp l00
-l=1;
-LacY=1;
-l_dotB = betaa*lextt*LacY-gammaa*l;
-LacY_dotB = deltaa+pp*l^4/(l^4+l00^4)-sigmaa*LacY;
+syms betaa gammaa deltaa sigmaa pp l00
+ll=1;
+LacYY=1;
+l_dotB = betaa*lext*LacYY-gammaa*ll;
+LacY_dotB = deltaa+pp*ll^4/(ll^4+l00^4)-sigmaa*LacYY;
 
-B = matlabFunction(jacobian([l_dotB,LacY_dotB],[betaa lextt gammaa deltaa sigmaa pp l00]));
+B = matlabFunction(jacobian([l_dotB,LacY_dotB],[betaa gammaa deltaa sigmaa pp l00]));
 
- ds = A(1)*reshape(S, [2, 7]) + B(1, 4, 1, 4);
- dsdt = reshape(ds, [14, 1]);
+ds = A(ll)*reshape(S, [2, 6]) + B(l0, p);
+dsdt = reshape(ds, [12, 1]);
 end
 
 function nl = plot_NullCline(x_lim, y_lim)

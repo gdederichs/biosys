@@ -81,7 +81,8 @@ saveas(gcf,'Results/bifurcation.png')
 %% Sensitivity analysis
 [t,S] = ode45(@S_dot,tspan,zeros([12,1]));
 S = reshape(S.',2,6,[]);
-S(:, :, end)
+S_normalized = S(:, :, end)/max(abs(S(:, :, end)), [], 'all')
+
 
 %% Functions
 function dsdt = S_dot(t, S)
@@ -91,8 +92,7 @@ delta = 0.2;
 sigma = 1;
 l0 = 4;
 p= 4;
-% Note: S change complètement en changeant lext
-lext = 2.5;
+lext = 1;
 
 syms l LacY
 

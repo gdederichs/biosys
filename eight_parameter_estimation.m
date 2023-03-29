@@ -1,9 +1,8 @@
 %% Sensitivity analysis
 tspan = 0:0.01:12;
-% Note: tspan doesnt change S values
 [t,S] = ode45(@S_dot,tspan,zeros([16,1]));
 S = reshape(S.',2,8,[]);
-S(:, :, end)
+S_normalized = S(:, :, end)/max(abs(S(:, :, end)), [], 'all')
 
 function results = eightt_parameter_estimation(initParams) 
 % Estimation of the parameters s, k1, k2, k3, k4, k5, km4 and km5 by non-linear least squares optimization

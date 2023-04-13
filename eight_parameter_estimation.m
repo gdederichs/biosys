@@ -25,26 +25,13 @@ for i = 1:numel(fields)
 end
 S_normalized = S(:, :, end)/max(abs(S(:, :, end)), [], 'all')
 
-function par = param()
-par.s = 0.8;
-par.k1 = 1;
-par.k2 = 0.8;
-par.k3 = 1.2;
-par.k4 = 1;
-par.k5= 1;
-par.km4 = 0.05;
-par.km5 = 0.05;
-end
-
-function x0 = init_cond()
-Act0 = 0.8;
-yp0 = 0.6;
-
-x0 = [Act0; yp0];
-end
-
-function results = eightt_parameter_estimation(initParams) 
+%% Parameters estimation
 % Estimation of the parameters s, k1, k2, k3, k4, k5, km4 and km5 by non-linear least squares optimization
+eightt_parameter_estimation
+
+%% Functions
+function results = eightt_parameter_estimation(initParams) 
+
 data = load("PosFeed_Expdata");
 tspan = data.tspan;
 exp = data.exp;
@@ -154,4 +141,22 @@ Act_dot = par.k1*par.s+par.k2*yp-par.k3*Act;
 yp_dot = par.k4*Act*(ytot-yp)/(par.km4+ytot-yp)-par.k5*E*yp/(par.km5+yp);
 
 dxdt = [Act_dot;yp_dot];
+end
+
+function par = param()
+par.s = 0.8;
+par.k1 = 1;
+par.k2 = 0.8;
+par.k3 = 1.2;
+par.k4 = 1;
+par.k5= 1;
+par.km4 = 0.05;
+par.km5 = 0.05;
+end
+
+function x0 = init_cond()
+Act0 = 0.8;
+yp0 = 0.6;
+
+x0 = [Act0; yp0];
 end

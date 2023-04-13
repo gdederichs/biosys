@@ -1,4 +1,4 @@
-function results = seven_parameter_estimation(initParams) 
+function results = noise_parameter_estimation(initParams) 
 % Estimation of the parameters by non-linear least squares optimization
 
 data = load("PosFeed_Expdata");

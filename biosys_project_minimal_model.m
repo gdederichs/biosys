@@ -78,57 +78,28 @@ xlabel("[lext]")
 set(gcf,'Position',[100 100 1000 600])
 saveas(gcf,'Results/bifurcation.png')
 
-%% Sensitivity analysis
-
-dp = param.*0.01;
-%boucle for pour itérer sur tous les paramètres
-[t_dp,x_dp] = ode45(@diff_eq,tspan,x0,options,param+dp);
-l_dp = x_dp(:, 1);
-LacY_dp = x_dp(:, 2);
-
+%% Sensitivity analysis using Euler
+fields = fieldnames(param);
+S = zeros(2,7);
 [t,x] = ode45(@diff_eq,tspan,x0,options,par);
 l = x(:, 1);
 LacY = x(:, 2);
 
-S = zeros(2,7);
-S(1,:) = (l_dp-l)/dp;
-S(2,:) = (LacY-LacY_dp)/dp;
-S
-
-% [t,S] = ode45(@S_dot,tspan,zeros([12,1]));
-% S = reshape(S.',2,6,[]);
-% S_normalized = S(:, :, end)/max(abs(S(:, :, end)), [], 'all')
+for i = 1:numel(fields)
+  parameters = param();
+  parameters.(fields{i}) = parameters.(fields{i}) + parameters.(fields{i})*0.01;
+  [t_dp,x_dp] = ode45(@diff_eq,tspan,x0,options,parameters);
+  l_dp = x_dp(:, 1);
+  LacY_dp = x_dp(:, 2);
+  
+  S(1,i) = (l_dp(end)-l(end))/parameters.(fields{i});
+  S(2,i) = (LacY_dp(end)-LacY(end))/parameters.(fields{i});
+  
+end
+S_normalized = S(:, :, end)/max(abs(S(:, :, end)), [], 'all')
 
 
 %% Functions
-% function dsdt = S_dot(t, S)
-% beta = 1;
-% gamma = 1;
-% delta = 0.2;
-% sigma = 1;
-% l0 = 4;
-% p= 4;
-% lext = 1;
-% 
-% syms l LacY
-% 
-% l_dotA = beta*lext*LacY-gamma*l;
-% LacY_dotA = delta+p*l^4/(l^4+l0^4)-sigma*LacY;
-% 
-% A = matlabFunction(jacobian([l_dotA,LacY_dotA],[l LacY]));
-% 
-% syms betaa gammaa deltaa sigmaa pp l00
-% ll=1;
-% LacYY=1;
-% l_dotB = betaa*lext*LacYY-gammaa*ll;
-% LacY_dotB = deltaa+pp*ll^4/(ll^4+l00^4)-sigmaa*LacYY;
-% 
-% B = matlabFunction(jacobian([l_dotB,LacY_dotB],[betaa gammaa deltaa sigmaa pp l00]));
-% 
-% ds = A(ll)*reshape(S, [2, 6]) + B(l0, p);
-% dsdt = reshape(ds, [12, 1]);
-% end
-
 function nl = plot_NullCline(x_lim, y_lim)
 par = param();
 

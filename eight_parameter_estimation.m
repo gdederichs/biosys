@@ -1,8 +1,47 @@
-%% Sensitivity analysis
+clc
+clear
+%% Sensitivity analysis using Euler
+x0 = init_cond();
 tspan = 0:0.01:12;
-[t,S] = ode45(@S_dot,tspan,zeros([16,1]));
-S = reshape(S.',2,8,[]);
+options = [];
+par = param();
+
+fields = fieldnames(param);
+S = zeros(2,8);
+[t,x] = ode45(@diff_eq,tspan,x0,options,par);
+Act = x(:, 1);
+yp = x(:, 2);
+
+for i = 1:numel(fields)
+  parameters = param();
+  parameters.(fields{i}) = parameters.(fields{i}) + parameters.(fields{i})*0.01;
+  [t_dp,x_dp] = ode45(@diff_eq,tspan,x0,options,parameters);
+  Act_dp = x_dp(:, 1);
+  yp_dp = x_dp(:, 2);
+  
+  S(1,i) = (Act_dp(end)-Act(end))/parameters.(fields{i});
+  S(2,i) = (yp_dp(end)-yp(end))/parameters.(fields{i});
+  
+end
 S_normalized = S(:, :, end)/max(abs(S(:, :, end)), [], 'all')
+
+function par = param()
+par.s = 0.8;
+par.k1 = 1;
+par.k2 = 0.8;
+par.k3 = 1.2;
+par.k4 = 1;
+par.k5= 1;
+par.km4 = 0.05;
+par.km5 = 0.05;
+end
+
+function x0 = init_cond()
+Act0 = 0.8;
+yp0 = 0.6;
+
+x0 = [Act0; yp0];
+end
 
 function results = eightt_parameter_estimation(initParams) 
 % Estimation of the parameters s, k1, k2, k3, k4, k5, km4 and km5 by non-linear least squares optimization
@@ -104,35 +143,15 @@ end
 end
 end
 
+function dxdt = diff_eq(t,x0,par)
+% Variables 
+Act = x0(1);
+yp = x0(2);
+ytot=1;
+E=0.5;
+% Differential equations
+Act_dot = par.k1*par.s+par.k2*yp-par.k3*Act;
+yp_dot = par.k4*Act*(ytot-yp)/(par.km4+ytot-yp)-par.k5*E*yp/(par.km5+yp);
 
-
-%% Functions
-function dsdt = S_dot(t, S)
-s = 0.8;
-k1 = 1;
-k2 = 0.8;
-k3 = 1.2;
-k4 = 1;
-k5= 1;
-km4 = 0.05;
-km5 = 0.05;
-E = 0.5;
-ytot = 1;
-
-syms Act yp
-Act_dotA = k1*s+k2*yp-k3*Act;
-yp_dotA = k4*Act*(ytot-yp)/(km4+ytot-yp)-k5*E*yp/(km5+yp);
-
-A = matlabFunction(jacobian([Act_dotA,yp_dotA],[Act yp]));
-
-syms ss k11 k22 k33 k44 k55 km44 km55
-Actt=0.8;
-ypp=0.6;
-Act_dotB = k11*ss+k22*ypp-k33*Actt;
-yp_dotB = k44*Actt*(ytot-ypp)/(km44+ytot-ypp)-k55*E*ypp/(km55+ypp);
-
-B = matlabFunction(jacobian([Act_dotB,yp_dotB],[ss k11 k22 k33 k44 k55 km44 km55]));
-
-ds = A(Actt, ypp)*reshape(S, [2, 8]) + B(s, k1, k4, k5, km4, km5);
-dsdt = reshape(ds, [16, 1]);
+dxdt = [Act_dot;yp_dot];
 end
